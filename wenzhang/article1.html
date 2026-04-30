@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>KARDS实用小技巧 - 我的个人博客</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -76,6 +77,7 @@
             flex: 1;
         }
 
+        /* 电脑端视频背景 */
         .video-bg {
             position: fixed;
             top: 0;
@@ -83,8 +85,33 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             z-index: -2;
             transition: opacity 2s ease;
+        }
+
+        /* 手机端静态图片背景 */
+        .mobile-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: -2;
+            display: none;
+        }
+
+        /* 手机端显示图片背景，隐藏视频 */
+        @media (max-width: 768px) {
+            .video-bg {
+                display: none !important;
+            }
+            .mobile-bg {
+                display: block !important;
+            }
         }
 
         .top-bar {
@@ -293,12 +320,70 @@
             font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
         }
 
-        @media (max-width: 600px) {
-            .header h1 { font-size: 32px; }
-            .article-card { padding: 25px; }
-            .nav-inner { gap: 15px; }
-            .nav-inner a { padding: 3px 8px; font-size: 14px; }
-            .wallpaper-mode-fixed-btn { font-size: 14px; padding: 5px 12px; top: 12px; left: 12px; }
+        /* ========== 移动端适配 ========== */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px !important;
+            }
+            .header p {
+                font-size: 14px !important;
+            }
+            .header {
+                padding: 40px 15px !important;
+            }
+            
+            .nav-inner {
+                padding: 10px 15px !important;
+                gap: 12px !important;
+            }
+            .nav-inner a {
+                font-size: 14px !important;
+                padding: 4px 8px !important;
+            }
+            
+            .article-card {
+                padding: 20px !important;
+            }
+            .article-meta {
+                font-size: 11px !important;
+                gap: 8px !important;
+            }
+            .article-content p {
+                font-size: 14px !important;
+            }
+            .article-content h2 {
+                font-size: 20px !important;
+            }
+            
+            .container {
+                padding: 20px 15px !important;
+            }
+            
+            .footer {
+                padding: 15px !important;
+                font-size: 12px !important;
+            }
+            
+            .wallpaper-mode-fixed-btn {
+                top: 10px !important;
+                left: 10px !important;
+                font-size: 12px !important;
+                padding: 5px 10px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-inner {
+                gap: 8px !important;
+            }
+            .nav-inner a {
+                font-size: 12px !important;
+                padding: 3px 6px !important;
+            }
+            .article-meta {
+                flex-direction: column !important;
+                gap: 5px !important;
+            }
         }
     </style>
 </head>
@@ -306,10 +391,13 @@
 
     <button class="wallpaper-mode-fixed-btn" id="globalWallpaperBtn">看壁纸</button>
 
+    <!-- 电脑端视频背景 -->
     <video id="videoBg" class="video-bg" autoplay loop muted>
         <source src="../dongtaibizhi/动态壁纸4.mp4v" type="video/mp4">
-        你的浏览器不支持视频背景。
     </video>
+
+    <!-- 手机端静态图片背景 -->
+    <div id="mobileBg" class="mobile-bg" style="background-image: url('../bizhi/17945164204789120.jfif');"></div>
 
     <div class="page">
         <div class="top-bar" id="articleTopBar">
@@ -349,21 +437,17 @@
                             <li><strong>日本</strong>：请输入文本</li>
                         </ul>
 
-                        
-
                         <h2>2. 卡组构筑思路</h2>
                         <p>盟国必选波兰，波兰扎扎实必须带满，因为扎扎实吴迪。</p>
                         <p>b站自己搜</p>
 
                         <h2>3. 对战技巧</h2>
                         <ul>
-                            <li><strong>会占领前线吗</li>
-                            <li><strong>会注意指挥点嘛</li>
-                            <li><strong>会懂得什么时候该出牌什么时候不出牌吗</li>
-                            <li><strong>恭喜你，你已经是一个老玩家了！</li>
+                            <li>会占领前线吗</li>
+                            <li>会注意指挥点嘛</li>
+                            <li>会懂得什么时候该出牌什么时候不出牌吗</li>
+                            <li>恭喜你，你已经是一个老玩家了！</li>
                         </ul>
-
-
 
                         <h2>4. 新手常见错误</h2>
                         <ul>
@@ -395,7 +479,6 @@
     </div>
 
     <script>
-        // 固定按钮功能
         const globalBtn = document.getElementById('globalWallpaperBtn');
         const articleTopBar = document.getElementById('articleTopBar');
         const body = document.body;
@@ -447,10 +530,8 @@
         window.addEventListener('scroll', onScroll);
     </script>
 
-    <!-- ⭐⭐⭐ 隐藏计时器 + 实时显示阅读时长 ⭐⭐⭐ -->
     <script>
         (function() {
-            // 文章唯一标识（和 index.html 里的 data-article-id 对应）
             const articleId = 'wenzhang_article1';
             const storageKey = 'readingTime_' + articleId;
             const readingTimeSpan = document.getElementById('readingTimeDisplay');
@@ -458,7 +539,6 @@
             let startTime = Date.now();
             let isActive = true;
             
-            // 格式化时间显示
             function formatTime(milliseconds) {
                 if (!milliseconds || milliseconds < 1000) return '0秒';
                 const minutes = Math.floor(milliseconds / 60000);
@@ -469,11 +549,9 @@
                 return seconds + '秒';
             }
             
-            // 更新页面上的阅读时长显示
             function updateDisplay() {
                 const saved = localStorage.getItem(storageKey);
                 let total = saved ? parseInt(saved) : 0;
-                // 如果当前页面活跃，加上本次会话已读时间
                 if (isActive) {
                     const currentElapsed = Date.now() - startTime;
                     total += currentElapsed;
@@ -481,7 +559,6 @@
                 readingTimeSpan.textContent = '已读 ' + formatTime(total);
             }
             
-            // 保存当前累计时长并更新显示
             function saveCurrentTime() {
                 if (isActive) {
                     const elapsed = Date.now() - startTime;
@@ -491,14 +568,11 @@
                     localStorage.setItem(storageKey, newTotal);
                     startTime = Date.now();
                     updateDisplay();
-                    console.log('已保存阅读时长：' + formatTime(newTotal));
                 }
             }
             
-            // 页面可见性变化时暂停/恢复计时
             document.addEventListener('visibilitychange', function() {
                 if (document.hidden) {
-                    // 页面隐藏，保存当前段时长
                     if (isActive) {
                         const elapsed = Date.now() - startTime;
                         const saved = localStorage.getItem(storageKey);
@@ -508,14 +582,12 @@
                         updateDisplay();
                     }
                 } else {
-                    // 页面重新可见，开始新一段计时
                     startTime = Date.now();
                     isActive = true;
                     updateDisplay();
                 }
             });
             
-            // 页面关闭或刷新时保存最后一段时长
             window.addEventListener('beforeunload', function() {
                 if (isActive) {
                     const elapsed = Date.now() - startTime;
@@ -525,20 +597,11 @@
                 }
             });
             
-            // 每5秒保存一次并更新显示
+            setInterval(saveCurrentTime, 5000);
             setInterval(function() {
-                saveCurrentTime();
-                updateDisplay();
-            }, 5000);
-            
-            // 每1秒更新显示（不保存，只刷新显示）
-            setInterval(function() {
-                if (isActive) {
-                    updateDisplay();
-                }
+                if (isActive) updateDisplay();
             }, 1000);
             
-            // 初始显示
             updateDisplay();
         })();
     </script>
