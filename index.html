@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>韭菜炒鸡蛋</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -88,38 +88,29 @@
             position: fixed;
             top: 0;
             left: 0;
-            min-width: 100%;
-            min-height: 100%;
-            width: auto;
-            height: auto;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             object-position: center;
             z-index: -2;
             transition: opacity 2s ease;
         }
 
-        /* 电脑端保持原样 */
-        @media (min-width: 769px) {
-            .video-bg {
-                width: 100%;
-                height: 100%;
-                min-width: auto;
-                min-height: auto;
-            }
-        }
-
-        /* 手机端视频适配 - 解决超出问题 */
+        /* 手机端视频强制适配 - 填满屏幕且不超出 */
         @media (max-width: 768px) {
             .video-bg {
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                min-width: 100%;
-                min-height: 100%;
-                width: auto;
-                height: auto;
-                object-fit: cover;
+                position: fixed !important;
+                top: 0 !important;
+                left: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+                min-width: 100% !important;
+                min-height: 100% !important;
+                max-width: none !important;
+                max-height: none !important;
+                object-fit: cover !important;
+                object-position: center !important;
+                transform: none !important;
             }
         }
 
@@ -784,7 +775,6 @@
     </div>
 
     <script>
-        // 文章数据（用于分类页面）
         const articles = [
             { title: "3. KARDS实用小技巧", link: "wenzhang/article1.html", date: "2026-04-28", category: "KARDS", summary: "扎？扎实吴迪！。", articleId: "wenzhang_article1" },
             { title: "2. 终极角逐实用小技巧", link: "wenzhang/article2.html", date: "2026-04-27", category: "终极角逐", summary: "如遇到“泡沫”挡路便可打击“泡沫连接处”以便更快打掉“泡沫”...", articleId: "wenzhang_article2" },
@@ -811,7 +801,6 @@
 
         const globalBtn = document.getElementById('globalWallpaperBtn');
 
-        // ==================== 阅读时长显示函数 ====================
         function formatTime(milliseconds) {
             if (!milliseconds || milliseconds < 1000) return '0秒';
             const minutes = Math.floor(milliseconds / 60000);
@@ -822,9 +811,7 @@
             return seconds + '秒';
         }
 
-        // 更新所有阅读时长显示
         function updateAllReadingTimes() {
-            // 更新首页的文章卡片
             const homeCards = document.querySelectorAll('#indexPage .post-card');
             homeCards.forEach(card => {
                 const articleId = card.getAttribute('data-article-id');
@@ -841,14 +828,11 @@
                     }
                 }
             });
-            
-            // 如果分类页面已经渲染了，也更新
             if (articlesListEl && articlesListEl.children.length > 0) {
                 renderArticles();
             }
         }
 
-        // ==================== 页面切换 ====================
         function getActiveTopBar() {
             if (indexPage.classList.contains('active')) return indexTopBar;
             if (aboutPage.classList.contains('active')) return aboutTopBar;
@@ -934,7 +918,6 @@
         function onScroll() { if (!ticking) { requestAnimationFrame(handleScroll); ticking = true; } }
         window.addEventListener('scroll', onScroll);
 
-        // ==================== 分类页面渲染 ====================
         function renderArticles() {
             let filteredArticles = articles;
             if (currentCategory !== 'all') {
@@ -978,7 +961,6 @@
 
         bindNavLinks(); updateActiveNav('index'); renderArticles(); updateAllReadingTimes();
         
-        // 每3秒更新一次阅读时长显示
         setInterval(updateAllReadingTimes, 3000);
         
         const observer = new MutationObserver(() => { bindNavLinks(); const activePage = indexPage.classList.contains('active') ? 'index' : (aboutPage.classList.contains('active') ? 'about' : 'category'); updateActiveNav(activePage); });
