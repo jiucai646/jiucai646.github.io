@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>韭菜炒鸡蛋</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -96,7 +96,7 @@
             transition: opacity 2s ease;
         }
 
-        /* 手机端视频 - 按屏幕比例完整显示，不裁剪 */
+        /* 手机端视频容器保持全屏 */
         @media (max-width: 768px) {
             .video-bg {
                 position: fixed !important;
@@ -104,9 +104,8 @@
                 left: 0 !important;
                 width: 100% !important;
                 height: 100% !important;
-                object-fit: contain !important;
+                object-fit: cover !important;
                 object-position: center !important;
-                background-color: #000;
             }
         }
 
@@ -632,13 +631,27 @@
 
     <button class="wallpaper-mode-fixed-btn" id="globalWallpaperBtn">看壁纸</button>
 
+    <!-- 首页视频：电脑端用原视频，手机端用专用竖屏视频 -->
     <video id="videoIndex" class="video-bg" autoplay loop muted style="opacity: 1;">
+        <!-- 电脑端（默认） -->
+        <source src="dongtaibizhi/动态壁纸.mp4v" type="video/mp4" media="(min-width: 769px)">
+        <!-- 手机端 -->
+        <source src="dongtaibizhi/动态壁纸手机端.mp4v" type="video/mp4" media="(max-width: 768px)">
+        <!-- 兜底 -->
         <source src="dongtaibizhi/动态壁纸.mp4v" type="video/mp4">
     </video>
+
+    <!-- 关于我页面视频 -->
     <video id="videoAbout" class="video-bg" autoplay loop muted style="opacity: 0;">
+        <source src="dongtaibizhi/动态壁纸2.mp4v" type="video/mp4" media="(min-width: 769px)">
+        <source src="dongtaibizhi/动态壁纸手机端2.mp4v" type="video/mp4" media="(max-width: 768px)">
         <source src="dongtaibizhi/动态壁纸2.mp4v" type="video/mp4">
     </video>
+
+    <!-- 分类页面视频 -->
     <video id="videoCategory" class="video-bg" autoplay loop muted style="opacity: 0;">
+        <source src="dongtaibizhi/动态壁纸3.mp4v" type="video/mp4" media="(min-width: 769px)">
+        <source src="dongtaibizhi/动态壁纸手机端3.mp4v" type="video/mp4" media="(max-width: 768px)">
         <source src="dongtaibizhi/动态壁纸3.mp4v" type="video/mp4">
     </video>
 
