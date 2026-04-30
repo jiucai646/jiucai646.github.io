@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>韭菜炒鸡蛋</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -96,7 +96,7 @@
             transition: opacity 2s ease;
         }
 
-        /* 手机端视频强制适配 - 填满屏幕且不超出 */
+        /* 手机端视频 - 按屏幕比例完整显示，不裁剪 */
         @media (max-width: 768px) {
             .video-bg {
                 position: fixed !important;
@@ -104,13 +104,9 @@
                 left: 0 !important;
                 width: 100% !important;
                 height: 100% !important;
-                min-width: 100% !important;
-                min-height: 100% !important;
-                max-width: none !important;
-                max-height: none !important;
-                object-fit: cover !important;
+                object-fit: contain !important;
                 object-position: center !important;
-                transform: none !important;
+                background-color: #000;
             }
         }
 
