@@ -96,9 +96,18 @@
             transition: opacity 2s ease;
         }
 
-        /* 手机端静态图片背景 */
-        .mobile-bg {
+        /* 手机端静态图片背景容器 */
+        .mobile-bg-container {
             position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+        }
+
+        .mobile-bg {
+            position: absolute;
             top: 0;
             left: 0;
             width: 100%;
@@ -106,17 +115,18 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            z-index: -2;
-            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .mobile-bg.active-bg {
+            opacity: 1;
         }
 
         /* 手机端显示图片背景，隐藏视频 */
         @media (max-width: 768px) {
             .video-bg {
                 display: none !important;
-            }
-            .mobile-bg {
-                display: block !important;
             }
         }
 
@@ -653,10 +663,12 @@
         <source src="dongtaibizhi/动态壁纸3.mp4v" type="video/mp4">
     </video>
 
-    <!-- 手机端静态图片背景（电脑端会自动隐藏） -->
-    <div id="mobileBgIndex" class="mobile-bg" style="background-image: url('bizhi/18181796000877952.jfif');"></div>
-    <div id="mobileBgAbout" class="mobile-bg" style="background-image: url('bizhi/17939920288075136.jfif');"></div>
-    <div id="mobileBgCategory" class="mobile-bg" style="background-image: url('bizhi/15758392453927232.jfif');"></div>
+    <!-- 手机端静态图片背景容器 -->
+    <div class="mobile-bg-container">
+        <div id="mobileBgIndex" class="mobile-bg" style="background-image: url('bizhi/18181796000877952.jfif');"></div>
+        <div id="mobileBgAbout" class="mobile-bg" style="background-image: url('bizhi/17939920288075136.jfif');"></div>
+        <div id="mobileBgCategory" class="mobile-bg" style="background-image: url('bizhi/15758392453927232.jfif');"></div>
+    </div>
 
     <!-- 首页页面 -->
     <div id="indexPage" class="page active">
@@ -807,6 +819,7 @@
         const mobileBgIndex = document.getElementById('mobileBgIndex');
         const mobileBgAbout = document.getElementById('mobileBgAbout');
         const mobileBgCategory = document.getElementById('mobileBgCategory');
+        const allMobileBgs = [mobileBgIndex, mobileBgAbout, mobileBgCategory];
         
         let navLinks = [];
         let currentCategory = 'all';
@@ -857,22 +870,23 @@
             return categoryTopBar;
         }
 
-        // 切换页面时同时切换手机端背景图片的显示
+        // 切换手机端背景图片
         function updateMobileBackground() {
-            if (window.innerWidth <= 768) {
-                if (indexPage.classList.contains('active')) {
-                    mobileBgIndex.style.display = 'block';
-                    mobileBgAbout.style.display = 'none';
-                    mobileBgCategory.style.display = 'none';
-                } else if (aboutPage.classList.contains('active')) {
-                    mobileBgIndex.style.display = 'none';
-                    mobileBgAbout.style.display = 'block';
-                    mobileBgCategory.style.display = 'none';
-                } else if (categoryPage.classList.contains('active')) {
-                    mobileBgIndex.style.display = 'none';
-                    mobileBgAbout.style.display = 'none';
-                    mobileBgCategory.style.display = 'block';
-                }
+            // 只有手机端才操作
+            if (window.innerWidth > 768) return;
+            
+            // 先隐藏所有背景
+            allMobileBgs.forEach(bg => {
+                if (bg) bg.classList.remove('active-bg');
+            });
+            
+            // 显示当前页面对应的背景
+            if (indexPage.classList.contains('active') && mobileBgIndex) {
+                mobileBgIndex.classList.add('active-bg');
+            } else if (aboutPage.classList.contains('active') && mobileBgAbout) {
+                mobileBgAbout.classList.add('active-bg');
+            } else if (categoryPage.classList.contains('active') && mobileBgCategory) {
+                mobileBgCategory.classList.add('active-bg');
             }
         }
 
