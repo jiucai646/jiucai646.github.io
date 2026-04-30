@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>KARDS实用小技巧 - 我的个人博客</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: "华文楷书", "Microsoft YaHei", "楷体", "KaiTi", "STKaiti", serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            overflow-x: hidden;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wallpaper-mode-fixed-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10000;
+            background: none;
+            border: none;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a5568;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.2s;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .wallpaper-mode-fixed-btn:hover {
+            color: #667eea;
+            background-color: rgba(102, 126, 234, 0.9);
+            color: white;
+        }
+        .immersive-mode .wallpaper-mode-fixed-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+        .immersive-mode .wallpaper-mode-fixed-btn:hover {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: opacity 2s ease;
+            opacity: 1;
+            pointer-events: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-content {
+            flex: 1;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            transition: opacity 2s ease;
+        }
+
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 2s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 2s ease;
+            opacity: 1;
+        }
+
+        .top-bar.hide-header {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .immersive-mode .top-bar .header,
+        .immersive-mode .page-content,
+        .immersive-mode .footer {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease, visibility 0s linear 2s;
+            pointer-events: none;
+        }
+
+        .immersive-mode .nav-inner a {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease, visibility 0s linear 2s;
+            pointer-events: none;
+        }
+
+        .header {
+            background: url("../bizhi/16840865276743040.jfif");
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: background-color 2s ease;
+        }
+        .immersive-mode .nav {
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        .nav-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-inner a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            transition: all 0.2s;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .nav-inner a:hover {
+            color: #667eea;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .article-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .article-meta {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .article-content h2 {
+            margin: 30px 0 15px 0;
+            color: #1a1a2e;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .article-content p {
+            margin-bottom: 20px;
+            color: #4a5568;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .article-content ul {
+            margin: 15px 0 20px 40px;
+            color: #4a5568;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .article-content li {
+            margin: 8px 0;
+            color: #4a5568;
+        }
+
+        .article-content strong {
+            color: #1a1a2e;
+        }
+
+        .article-content code {
+            background-color: rgba(226, 232, 240, 0.9);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: monospace;
+            font-size: 14px;
+            color: #1a1a2e;
+        }
+
+        pre {
+            background-color: #1a1a2e;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 12px;
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+
+        pre code {
+            background: none;
+            color: inherit;
+            padding: 0;
+        }
+
+        .article-image {
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .article-image img {
+            max-width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .article-image img:hover {
+            transform: scale(1.02);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #4a5568;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.8);
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            width: 100%;
+        }
+
+        .back-link {
+            margin-top: 30px;
+            text-align: center;
+        }
+
+        .back-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 32px; }
+            .article-card { padding: 25px; }
+            .nav-inner { gap: 15px; }
+            .nav-inner a { padding: 3px 8px; font-size: 14px; }
+            .wallpaper-mode-fixed-btn { font-size: 14px; padding: 5px 12px; top: 12px; left: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="wallpaper-mode-fixed-btn" id="globalWallpaperBtn">看壁纸</button>
+
+    <video id="videoBg" class="video-bg" autoplay loop muted>
+        <source src="../dongtaibizhi/动态壁纸4.mp4" type="video/mp4">
+        你的浏览器不支持视频背景。
+    </video>
+
+    <div class="page">
+        <div class="top-bar" id="articleTopBar">
+            <div class="header">
+                <h1>KARDS实用小技巧</h1>
+                <p>新手必看 · 快速上手攻略</p>
+            </div>
+            <div class="nav">
+                <div class="nav-inner">
+                    <a href="../index.html">首页</a>
+                    <a href="../index.html">关于我</a>
+                    <a href="../index.html">文章搜索/分类</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="container">
+                <div class="article-card">
+                    <div class="article-meta">
+                        <span>时间 2026年4月28日</span>
+                        <span>标签 KARDS</span>
+                        <span id="readingTimeDisplay">加载中...</span>
+                    </div>
+
+                    <div class="article-content">
+                        <p><strong>KARDS实用小技巧分享</strong></p>
+
+                        <h2>1. 基础入门</h2>
+                        <p>KARDS是一款二战题材的卡牌游戏，结合了扎扎实与渣渣事动人的故事：</p>
+
+                        <ul>
+                            <li><strong>德国</strong>：中等</li>
+                            <li><strong>美国</strong>：quququququququququququ</li>
+                            <li><strong>英国</strong>：稍微强点</li>
+                            <li><strong>苏联</strong>：强！。弱！。heye，wei？。</li>
+                            <li><strong>日本</strong>：请输入文本</li>
+                        </ul>
+
+                        
+
+                        <h2>2. 卡组构筑思路</h2>
+                        <p>盟国必选波兰，波兰扎扎实必须带满，因为扎扎实吴迪。</p>
+                        <p>b站自己搜</p>
+
+                        <h2>3. 对战技巧</h2>
+                        <ul>
+                            <li><strong>会占领前线吗</li>
+                            <li><strong>会注意指挥点嘛</li>
+                            <li><strong>会懂得什么时候该出牌什么时候不出牌吗</li>
+                            <li><strong>恭喜你，你已经是一个老玩家了！</li>
+                        </ul>
+
+
+
+                        <h2>4. 新手常见错误</h2>
+                        <ul>
+                            <li>看对面指挥点剩余多少大概率挂什么反制了</li>
+                            <li>注意指挥点注意指挥点请注意你的指挥点，到时候没指挥点了出不了牌</li>
+                            <li>新手不使用扎扎实这就是个错误</li>
+                            <li>兑</li>
+                        </ul>
+
+                        <h2>5. 金币获取</h2>
+                        <p>每天完成日常任务可以获得金币，优先购买当前版本的卡包</p>
+                        <p>刷等级有金币，开骨灰盒，玩竞技场</p>
+
+                        <h2>总结</h2>
+                        <p>1939老冯是没有的</p>
+                        <p>所以可以尽情的骂1939</p>
+                    </div>
+                </div>
+
+                <div class="back-link">
+                    <a href="../index.html">← 返回首页</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>目前努力更新中...</p>
+        </div>
+    </div>
+
+    <script>
+        // 固定按钮功能
+        const globalBtn = document.getElementById('globalWallpaperBtn');
+        const articleTopBar = document.getElementById('articleTopBar');
+        const body = document.body;
+        let isImmersive = false;
+
+        function toggleImmersiveMode() {
+            if (isImmersive) {
+                body.classList.remove('immersive-mode');
+                if (articleTopBar) articleTopBar.classList.remove('hide-header');
+                globalBtn.textContent = '看壁纸';
+                isImmersive = false;
+            } else {
+                body.classList.add('immersive-mode');
+                if (articleTopBar) articleTopBar.classList.add('hide-header');
+                globalBtn.textContent = '停止观看壁纸';
+                isImmersive = true;
+            }
+        }
+
+        globalBtn.addEventListener('click', toggleImmersiveMode);
+
+        let lastScrollTop = 0;
+        let ticking = false;
+
+        function handleScroll() {
+            if (isImmersive) return;
+            if (!articleTopBar) return;
+            
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollDelta = scrollTop - lastScrollTop;
+            
+            if (scrollDelta > 5 && scrollTop > 80) {
+                articleTopBar.classList.add('hide-header');
+            } else if (scrollDelta < -5 || scrollTop < 50) {
+                articleTopBar.classList.remove('hide-header');
+            }
+            
+            lastScrollTop = scrollTop;
+            ticking = false;
+        }
+
+        function onScroll() {
+            if (!ticking) {
+                requestAnimationFrame(handleScroll);
+                ticking = true;
+            }
+        }
+
+        window.addEventListener('scroll', onScroll);
+    </script>
+
+    <!-- ⭐⭐⭐ 隐藏计时器 + 实时显示阅读时长 ⭐⭐⭐ -->
+    <script>
+        (function() {
+            // 文章唯一标识（和 index.html 里的 data-article-id 对应）
+            const articleId = 'wenzhang_article1';
+            const storageKey = 'readingTime_' + articleId;
+            const readingTimeSpan = document.getElementById('readingTimeDisplay');
+            
+            let startTime = Date.now();
+            let isActive = true;
+            
+            // 格式化时间显示
+            function formatTime(milliseconds) {
+                if (!milliseconds || milliseconds < 1000) return '0秒';
+                const minutes = Math.floor(milliseconds / 60000);
+                const seconds = Math.floor((milliseconds % 60000) / 1000);
+                if (minutes > 0) {
+                    return minutes + '分钟' + seconds + '秒';
+                }
+                return seconds + '秒';
+            }
+            
+            // 更新页面上的阅读时长显示
+            function updateDisplay() {
+                const saved = localStorage.getItem(storageKey);
+                let total = saved ? parseInt(saved) : 0;
+                // 如果当前页面活跃，加上本次会话已读时间
+                if (isActive) {
+                    const currentElapsed = Date.now() - startTime;
+                    total += currentElapsed;
+                }
+                readingTimeSpan.textContent = '已读 ' + formatTime(total);
+            }
+            
+            // 保存当前累计时长并更新显示
+            function saveCurrentTime() {
+                if (isActive) {
+                    const elapsed = Date.now() - startTime;
+                    const saved = localStorage.getItem(storageKey);
+                    const currentTotal = saved ? parseInt(saved) : 0;
+                    const newTotal = currentTotal + elapsed;
+                    localStorage.setItem(storageKey, newTotal);
+                    startTime = Date.now();
+                    updateDisplay();
+                    console.log('已保存阅读时长：' + formatTime(newTotal));
+                }
+            }
+            
+            // 页面可见性变化时暂停/恢复计时
+            document.addEventListener('visibilitychange', function() {
+                if (document.hidden) {
+                    // 页面隐藏，保存当前段时长
+                    if (isActive) {
+                        const elapsed = Date.now() - startTime;
+                        const saved = localStorage.getItem(storageKey);
+                        const currentTotal = saved ? parseInt(saved) : 0;
+                        localStorage.setItem(storageKey, currentTotal + elapsed);
+                        isActive = false;
+                        updateDisplay();
+                    }
+                } else {
+                    // 页面重新可见，开始新一段计时
+                    startTime = Date.now();
+                    isActive = true;
+                    updateDisplay();
+                }
+            });
+            
+            // 页面关闭或刷新时保存最后一段时长
+            window.addEventListener('beforeunload', function() {
+                if (isActive) {
+                    const elapsed = Date.now() - startTime;
+                    const saved = localStorage.getItem(storageKey);
+                    const currentTotal = saved ? parseInt(saved) : 0;
+                    localStorage.setItem(storageKey, currentTotal + elapsed);
+                }
+            });
+            
+            // 每5秒保存一次并更新显示
+            setInterval(function() {
+                saveCurrentTime();
+                updateDisplay();
+            }, 5000);
+            
+            // 每1秒更新显示（不保存，只刷新显示）
+            setInterval(function() {
+                if (isActive) {
+                    updateDisplay();
+                }
+            }, 1000);
+            
+            // 初始显示
+            updateDisplay();
+        })();
+    </script>
+</body>
+</html>

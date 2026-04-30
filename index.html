@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>我的个人博客</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: "华文楷书", "Microsoft YaHei", "楷体", "KaiTi", "STKaiti", serif;
+            line-height: 1.7;
+            color: #1a1a2e;
+            overflow-x: hidden;
+            min-height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .wallpaper-mode-fixed-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 10000;
+            background: none;
+            border: none;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            font-size: 18px;
+            font-weight: bold;
+            color: #4a5568;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.2s;
+            background-color: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(4px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .wallpaper-mode-fixed-btn:hover {
+            color: #667eea;
+            background-color: rgba(102, 126, 234, 0.9);
+            color: white;
+        }
+        .immersive-mode .wallpaper-mode-fixed-btn {
+            background-color: rgba(0, 0, 0, 0.6);
+            color: white;
+            backdrop-filter: blur(8px);
+        }
+        .immersive-mode .wallpaper-mode-fixed-btn:hover {
+            background-color: #667eea;
+            color: white;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            transition: opacity 2s ease;
+            opacity: 0;
+            pointer-events: none;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page.active {
+            opacity: 1;
+            pointer-events: auto;
+            position: relative;
+        }
+
+        .page-content {
+            flex: 1;
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -2;
+            transition: opacity 2s ease;
+        }
+
+        .top-bar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            transition: transform 2s cubic-bezier(0.2, 0.9, 0.4, 1.1), opacity 2s ease;
+            opacity: 1;
+        }
+
+        .top-bar.hide-header {
+            transform: translateY(-100%);
+            opacity: 0;
+        }
+
+        .immersive-mode .page.active .top-bar .header,
+        .immersive-mode .page.active .page-content,
+        .immersive-mode .page.active .footer {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease, visibility 0s linear 2s;
+            pointer-events: none;
+        }
+
+        .immersive-mode .page.active .top-bar .nav .nav-inner a {
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 2s ease, visibility 0s linear 2s;
+            pointer-events: none;
+        }
+
+        .header {
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .header-index {
+            background: url("bizhi/16242320420294016.jfif");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-about {
+            background-image: url('bizhi/15946454747565440.jfif');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header-category {
+            background: url("bizhi/15975161678908800.jfif");
+            background-size: cover;
+            background-position: center;
+        }
+
+        .header h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .header p {
+            font-size: 18px;
+            opacity: 0.9;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .nav {
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: background-color 2s ease;
+        }
+        .immersive-mode .nav {
+            background-color: transparent;
+            box-shadow: none;
+        }
+
+        .nav-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .nav-inner .wallpaper-mode-btn {
+            display: none;
+        }
+
+        .nav-inner a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            transition: all 0.2s;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 20px;
+        }
+
+        .nav-inner a:hover {
+            color: #667eea;
+            background-color: rgba(102, 126, 234, 0.1);
+        }
+
+        .nav-inner a.active-nav {
+            color: white;
+            background-color: #667eea;
+            text-shadow: 0 0 5px rgba(255,255,255,0.5);
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.6);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .container-category {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .post-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .post-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .post-title {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .post-title a {
+            text-decoration: none;
+            color: #1a1a2e;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .post-title a:hover {
+            color: #667eea;
+        }
+
+        .post-meta {
+            color: #a0aec0;
+            font-size: 14px;
+            margin-bottom: 15px;
+            display: flex;
+            gap: 15px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .post-summary {
+            color: #4a5568;
+            margin-bottom: 20px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .read-more {
+            display: inline-block;
+            background-color: #667eea;
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .read-more:hover {
+            background-color: #5a67d8;
+            transform: scale(1.02);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #4a5568;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.8);
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            width: 100%;
+        }
+
+        .avatar {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .avatar img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #667eea;
+        }
+
+        .card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(2px);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .card h2 {
+            color: #1a1a2e;
+            margin-bottom: 12px;
+            border-left: 4px solid #667eea;
+            padding-left: 15px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .card p {
+            margin-bottom: 10px;
+            color: #4a5568;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 12px 0;
+        }
+
+        .skill-tag {
+            background-color: rgba(226, 232, 240, 0.9);
+            padding: 5px 15px;
+            border-radius: 30px;
+            font-size: 14px;
+            color: #4a5568;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .category-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .category-tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .category-btn {
+            background-color: rgba(226, 232, 240, 0.9);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            color: #4a5568;
+        }
+
+        .category-btn:hover {
+            background-color: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .category-btn.active-cat {
+            background-color: #667eea;
+            color: white;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .search-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .search-toggle {
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            color: #4a5568;
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 30px;
+            transition: all 0.3s;
+        }
+
+        .search-toggle:hover {
+            background-color: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .search-input {
+            padding: 8px 16px;
+            border-radius: 30px;
+            border: 1px solid #cbd5e1;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            font-size: 14px;
+            width: 0;
+            opacity: 0;
+            transition: all 0.3s ease;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .search-input.show {
+            width: 200px;
+            opacity: 1;
+            padding: 8px 16px;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+        }
+
+        .articles-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .article-item {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(2px);
+            border-radius: 16px;
+            padding: 25px 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .article-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            background-color: rgba(255, 255, 255, 0.95);
+        }
+
+        .article-info {
+            flex: 1;
+        }
+
+        .article-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .article-title a {
+            text-decoration: none;
+            color: #1a1a2e;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .article-title a:hover {
+            color: #667eea;
+        }
+
+        .article-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 13px;
+            color: #a0aec0;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .article-tag {
+            background-color: rgba(226, 232, 240, 0.9);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            color: #4a5568;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #a0aec0;
+            font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 { font-size: 32px; }
+            .post-title { font-size: 22px; }
+            .nav-inner { gap: 10px; }
+            .nav-inner a { padding: 3px 8px; font-size: 14px; }
+            .wallpaper-mode-fixed-btn { font-size: 14px; padding: 5px 12px; top: 12px; left: 12px; }
+            .card { padding: 20px; }
+            .category-btn { padding: 6px 16px; font-size: 14px; }
+            .article-item { flex-direction: column; align-items: flex-start; gap: 12px; }
+            .article-title { font-size: 18px; }
+            .category-header { flex-direction: column; align-items: stretch; }
+            .search-area { justify-content: flex-end; }
+            .search-input.show { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="wallpaper-mode-fixed-btn" id="globalWallpaperBtn">看壁纸</button>
+
+    <video id="videoIndex" class="video-bg" autoplay loop muted style="opacity: 1;">
+        <source src="dongtaibizhi/动态壁纸.mp4" type="video/mp4">
+    </video>
+    <video id="videoAbout" class="video-bg" autoplay loop muted style="opacity: 0;">
+        <source src="dongtaibizhi/动态壁纸2.mp4" type="video/mp4">
+    </video>
+    <video id="videoCategory" class="video-bg" autoplay loop muted style="opacity: 0;">
+        <source src="dongtaibizhi/动态壁纸3.mp4" type="video/mp4">
+    </video>
+
+    <!-- 首页页面 -->
+    <div id="indexPage" class="page active">
+        <div class="top-bar" id="indexTopBar">
+            <div class="header header-index">
+                <h1>韭菜炒鸡蛋的小窝</h1>
+                <p>战争警戒 终极角逐 KARDS 异环</p>
+            </div>
+            <div class="nav">
+                <div class="nav-inner">
+                    <a class="nav-link" data-page="index">首页</a>
+                    <a class="nav-link" data-page="about">关于我</a>
+                    <a class="nav-link" data-page="category">文章搜索/分类</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <div class="container">
+                <div class="post-card" data-article-id="wenzhang_article1">
+                    <div class="post-meta">
+                        <span>2026年4月28日</span>
+                        <span>KARDS</span>
+                        <span class="reading-time-display">阅读0分钟</span>
+                    </div>
+                    <h2 class="post-title"><a href="wenzhang/article1.html">3. KARDS实用小技巧</a></h2>
+                    <div class="post-summary">扎？扎实吴迪！。</div>
+                    <a href="wenzhang/article1.html" class="read-more">阅读全文 →</a>
+                </div>
+                <div class="post-card" data-article-id="wenzhang_article2">
+                    <div class="post-meta">
+                        <span>2026年4月27日</span>
+                        <span>终极角逐</span>
+                        <span class="reading-time-display">阅读0分钟</span>
+                    </div>
+                    <h2 class="post-title"><a href="wenzhang/article2.html">2. 终极角逐实用小技巧</a></h2>
+                    <div class="post-summary">如遇到"泡沫"挡路便可打击"泡沫连接处"以便更快打掉"泡沫"...</div>
+                    <a href="wenzhang/article2.html" class="read-more">阅读全文 →</a>
+                </div>
+                <div class="post-card" data-article-id="wenzhang_article3">
+                    <div class="post-meta">
+                        <span>2026年4月26日</span>
+                        <span>战争警戒</span>
+                        <span class="reading-time-display">阅读0分钟</span>
+                    </div>
+                    <h2 class="post-title"><a href="wenzhang/article3.html">1. 战争警戒实用小技巧</a></h2>
+                    <div class="post-summary">机枪移动选择最好拖动右下角的"侦查移动"，这样子就可以...</div>
+                    <a href="wenzhang/article3.html" class="read-more">阅读全文 →</a>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><p>目前努力更新中...</p></div>
+    </div>
+
+    <!-- 关于我页面 -->
+    <div id="aboutPage" class="page">
+        <div class="top-bar" id="aboutTopBar">
+            <div class="header header-about">
+                <h1>关于我</h1>
+                <p>了解博客背后的我</p>
+            </div>
+            <div class="nav">
+                <div class="nav-inner">
+                    <a class="nav-link" data-page="index">首页</a>
+                    <a class="nav-link" data-page="about">关于我</a>
+                    <a class="nav-link" data-page="category">文章搜索/分类</a>
+                </div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="container">
+                <div class="card">
+                    <div class="avatar"><img src="b_3297b50935bfa81fd54dea32cd2f2ddf.jpg" alt="头像"></div>
+                    <h2>兑。你好</h2>
+                    <p>神秘男子正在练习html</p>
+                    <p>饿啊</p>
+                    <h2>兴趣爱好</h2>
+                    <div class="skills">
+                        <span class="skill-tag">打飞机</span>
+                        <span class="skill-tag">打飞机</span>
+                        <span class="skill-tag">打飞机</span>
+                        <span class="skill-tag">打飞机</span>
+                    </div>
+                    <h2>所以这个网站是何意味</h2>
+                    <p>兑。说的道理。这个网站就是打飞机的</p>
+                    <h2>QQ</h2>
+                    <p>你可以通过QQ联系我：<strong>2499815410</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="footer"><p>目前努力更新中...</p></div>
+    </div>
+
+    <!-- 文章搜索/分类页面 -->
+    <div id="categoryPage" class="page">
+        <div class="top-bar" id="categoryTopBar">
+            <div class="header header-category">
+                <h1>文章搜索/分类</h1>
+                <p>按标签分类或搜索浏览</p>
+            </div>
+            <div class="nav">
+                <div class="nav-inner">
+                    <a class="nav-link" data-page="index">首页</a>
+                    <a class="nav-link" data-page="about">关于我</a>
+                    <a class="nav-link" data-page="category">文章搜索/分类</a>
+                </div>
+            </div>
+        </div>
+        <div class="page-content">
+            <div class="container-category">
+                <div class="category-header">
+                    <div class="category-tabs" id="categoryTabs">
+                        <button class="category-btn active-cat" data-cat="all">全部</button>
+                        <button class="category-btn" data-cat="战争警戒">战争警戒</button>
+                        <button class="category-btn" data-cat="终极角逐">终极角逐</button>
+                        <button class="category-btn" data-cat="KARDS">KARDS</button>
+                        <button class="category-btn" data-cat="异环">异环</button>
+                    </div>
+                    <div class="search-area">
+                        <button class="search-toggle" id="searchToggle">搜索</button>
+                        <input type="text" class="search-input" id="searchInput" placeholder="输入文章标题...">
+                    </div>
+                </div>
+                <div class="articles-list" id="articlesList"></div>
+            </div>
+        </div>
+        <div class="footer"><p>目前努力更新中...</p></div>
+    </div>
+
+    <script>
+        // 文章数据（用于分类页面）
+        const articles = [
+            { title: "3. KARDS实用小技巧", link: "wenzhang/article1.html", date: "2026-04-28", category: "KARDS", summary: "扎？扎实吴迪！。", articleId: "wenzhang_article1" },
+            { title: "2. 终极角逐实用小技巧", link: "wenzhang/article2.html", date: "2026-04-27", category: "终极角逐", summary: "如遇到“泡沫”挡路便可打击“泡沫连接处”以便更快打掉“泡沫”...", articleId: "wenzhang_article2" },
+            { title: "1. 战争警戒实用小技巧", link: "wenzhang/article3.html", date: "2026-04-26", category: "战争警戒", summary: "机枪移动选择最好拖动右下角的“侦查移动”，这样子就可以...", articleId: "wenzhang_article3" }
+        ];
+
+        const indexPage = document.getElementById('indexPage');
+        const aboutPage = document.getElementById('aboutPage');
+        const categoryPage = document.getElementById('categoryPage');
+        const videoIndex = document.getElementById('videoIndex');
+        const videoAbout = document.getElementById('videoAbout');
+        const videoCategory = document.getElementById('videoCategory');
+        const indexTopBar = document.getElementById('indexTopBar');
+        const aboutTopBar = document.getElementById('aboutTopBar');
+        const categoryTopBar = document.getElementById('categoryTopBar');
+        let navLinks = [];
+        let currentCategory = 'all';
+        let currentSearchText = '';
+        const articlesListEl = document.getElementById('articlesList');
+        const categoryBtns = document.querySelectorAll('.category-btn');
+        const searchToggle = document.getElementById('searchToggle');
+        const searchInput = document.getElementById('searchInput');
+        let isImmersive = false;
+
+        const globalBtn = document.getElementById('globalWallpaperBtn');
+
+        // ==================== 阅读时长显示函数 ====================
+        function formatTime(milliseconds) {
+            if (!milliseconds || milliseconds < 1000) return '0秒';
+            const minutes = Math.floor(milliseconds / 60000);
+            const seconds = Math.floor((milliseconds % 60000) / 1000);
+            if (minutes > 0) {
+                return minutes + '分钟' + seconds + '秒';
+            }
+            return seconds + '秒';
+        }
+
+        // 更新所有阅读时长显示
+        function updateAllReadingTimes() {
+            // 更新首页的文章卡片
+            const homeCards = document.querySelectorAll('#indexPage .post-card');
+            homeCards.forEach(card => {
+                const articleId = card.getAttribute('data-article-id');
+                if (articleId) {
+                    const storageKey = 'readingTime_' + articleId;
+                    const savedTime = localStorage.getItem(storageKey);
+                    const timeSpan = card.querySelector('.reading-time-display');
+                    if (timeSpan) {
+                        if (savedTime) {
+                            timeSpan.textContent = '阅读' + formatTime(parseInt(savedTime));
+                        } else {
+                            timeSpan.textContent = '阅读0分钟';
+                        }
+                    }
+                }
+            });
+            
+            // 如果分类页面已经渲染了，也更新
+            if (articlesListEl && articlesListEl.children.length > 0) {
+                renderArticles();
+            }
+        }
+
+        // ==================== 页面切换 ====================
+        function getActiveTopBar() {
+            if (indexPage.classList.contains('active')) return indexTopBar;
+            if (aboutPage.classList.contains('active')) return aboutTopBar;
+            return categoryTopBar;
+        }
+
+        function toggleImmersiveMode() {
+            const body = document.body;
+            const activeBar = getActiveTopBar();
+            
+            if (isImmersive) {
+                body.classList.remove('immersive-mode');
+                if (activeBar) activeBar.classList.remove('hide-header');
+                globalBtn.textContent = '看壁纸';
+                isImmersive = false;
+            } else {
+                body.classList.add('immersive-mode');
+                if (activeBar) activeBar.classList.add('hide-header');
+                globalBtn.textContent = '停止观看壁纸';
+                isImmersive = true;
+            }
+        }
+
+        function updateActiveNav(currentPage) {
+            navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                const page = link.getAttribute('data-page');
+                if (page === currentPage) link.classList.add('active-nav');
+                else link.classList.remove('active-nav');
+            });
+        }
+
+        function switchPage(pageId) {
+            if (isImmersive) {
+                document.body.classList.remove('immersive-mode');
+                globalBtn.textContent = '看壁纸';
+                isImmersive = false;
+            }
+            if (pageId === 'index') {
+                indexPage.classList.add('active'); aboutPage.classList.remove('active'); categoryPage.classList.remove('active');
+                videoIndex.style.opacity = '1'; videoAbout.style.opacity = '0'; videoCategory.style.opacity = '0';
+            } else if (pageId === 'about') {
+                aboutPage.classList.add('active'); indexPage.classList.remove('active'); categoryPage.classList.remove('active');
+                videoIndex.style.opacity = '0'; videoAbout.style.opacity = '1'; videoCategory.style.opacity = '0';
+            } else {
+                categoryPage.classList.add('active'); indexPage.classList.remove('active'); aboutPage.classList.remove('active');
+                videoIndex.style.opacity = '0'; videoAbout.style.opacity = '0'; videoCategory.style.opacity = '1';
+            }
+            updateActiveNav(pageId);
+            setTimeout(() => {
+                if (pageId === 'index' && indexTopBar) indexTopBar.classList.remove('hide-header');
+                if (pageId === 'about' && aboutTopBar) aboutTopBar.classList.remove('hide-header');
+                if (pageId === 'category' && categoryTopBar) categoryTopBar.classList.remove('hide-header');
+                lastScrollTop = 0;
+            }, 100);
+        }
+
+        function bindNavLinks() {
+            navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.removeEventListener('click', handleNavClick);
+                link.addEventListener('click', handleNavClick);
+            });
+        }
+        function handleNavClick(e) {
+            e.preventDefault();
+            const page = this.getAttribute('data-page');
+            if (page) switchPage(page);
+        }
+
+        let lastScrollTop = 0, ticking = false;
+        function handleScroll() {
+            if (isImmersive) return;
+            let activeTopBar = getActiveTopBar();
+            if (!activeTopBar) return;
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const scrollDelta = scrollTop - lastScrollTop;
+            if (scrollDelta > 5 && scrollTop > 80) activeTopBar.classList.add('hide-header');
+            else if (scrollDelta < -5 || scrollTop < 50) activeTopBar.classList.remove('hide-header');
+            lastScrollTop = scrollTop;
+            ticking = false;
+        }
+        function onScroll() { if (!ticking) { requestAnimationFrame(handleScroll); ticking = true; } }
+        window.addEventListener('scroll', onScroll);
+
+        // ==================== 分类页面渲染 ====================
+        function renderArticles() {
+            let filteredArticles = articles;
+            if (currentCategory !== 'all') {
+                filteredArticles = articles.filter(a => a.category === currentCategory);
+            }
+            if (currentSearchText.trim() !== '') {
+                filteredArticles = filteredArticles.filter(a => a.title.toLowerCase().includes(currentSearchText.toLowerCase()));
+            }
+            if (filteredArticles.length === 0) {
+                articlesListEl.innerHTML = `<div class="empty-state">暂无文章，等我更新吧～</div>`;
+                return;
+            }
+            let html = '';
+            filteredArticles.forEach(article => {
+                const storageKey = 'readingTime_' + article.articleId;
+                const savedTime = localStorage.getItem(storageKey);
+                let timeDisplay = '0秒';
+                if (savedTime) {
+                    timeDisplay = formatTime(parseInt(savedTime));
+                }
+                html += `<div class="article-item"><div class="article-info"><div class="article-title"><a href="${article.link}">${article.title}</a></div><div class="article-meta"><span>时间 ${article.date}</span><span class="article-tag">${article.category}</span><span>⏱️ 已读 ${timeDisplay}</span></div><div class="post-summary" style="margin-top:10px;color:#4a5568;font-size:14px;">${article.summary}</div></div><a href="${article.link}" class="read-more" style="background-color:#667eea;color:white;text-decoration:none;padding:8px20px;border-radius:30px;font-size:14px;">阅读 →</a></div>`;
+            });
+            articlesListEl.innerHTML = html;
+        }
+
+        function switchCategory(category) {
+            currentCategory = category;
+            categoryBtns.forEach(btn => { if (btn.getAttribute('data-cat') === category) btn.classList.add('active-cat'); else btn.classList.remove('active-cat'); });
+            renderArticles();
+        }
+        
+        if (searchToggle) searchToggle.addEventListener('click', () => {
+            searchInput.classList.toggle('show');
+            if (searchInput.classList.contains('show')) { searchInput.focus(); if (currentSearchText !== '') { currentSearchText = ''; searchInput.value = ''; renderArticles(); } }
+            else { currentSearchText = ''; searchInput.value = ''; renderArticles(); }
+        });
+        if (searchInput) searchInput.addEventListener('input', (e) => { currentSearchText = e.target.value; renderArticles(); });
+        if (categoryBtns.length) categoryBtns.forEach(btn => btn.addEventListener('click', () => switchCategory(btn.getAttribute('data-cat'))));
+
+        globalBtn.addEventListener('click', toggleImmersiveMode);
+
+        bindNavLinks(); updateActiveNav('index'); renderArticles(); updateAllReadingTimes();
+        
+        // 每3秒更新一次阅读时长显示
+        setInterval(updateAllReadingTimes, 3000);
+        
+        const observer = new MutationObserver(() => { bindNavLinks(); const activePage = indexPage.classList.contains('active') ? 'index' : (aboutPage.classList.contains('active') ? 'about' : 'category'); updateActiveNav(activePage); });
+        observer.observe(document.body, { childList: true, subtree: true });
+    </script>
+</body>
+</html>
