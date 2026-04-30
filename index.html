@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>我的个人博客</title>
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
@@ -82,6 +83,7 @@
             flex: 1;
         }
 
+        /* 视频背景 - 完美适配所有屏幕 */
         .video-bg {
             position: fixed;
             top: 0;
@@ -89,6 +91,7 @@
             width: 100%;
             height: 100%;
             object-fit: cover;
+            object-position: center;
             z-index: -2;
             transition: opacity 2s ease;
         }
@@ -257,6 +260,7 @@
             margin-bottom: 15px;
             display: flex;
             gap: 15px;
+            flex-wrap: wrap;
             font-family: "华文楷书", "楷体", "KaiTi", "STKaiti", serif;
         }
 
@@ -512,19 +516,101 @@
             border-radius: 20px;
         }
 
-        @media (max-width: 600px) {
-            .header h1 { font-size: 32px; }
-            .post-title { font-size: 22px; }
-            .nav-inner { gap: 10px; }
-            .nav-inner a { padding: 3px 8px; font-size: 14px; }
-            .wallpaper-mode-fixed-btn { font-size: 14px; padding: 5px 12px; top: 12px; left: 12px; }
-            .card { padding: 20px; }
-            .category-btn { padding: 6px 16px; font-size: 14px; }
-            .article-item { flex-direction: column; align-items: flex-start; gap: 12px; }
-            .article-title { font-size: 18px; }
-            .category-header { flex-direction: column; align-items: stretch; }
-            .search-area { justify-content: flex-end; }
-            .search-input.show { width: 100%; }
+        /* ========== 移动端适配 ========== */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 28px !important;
+            }
+            .header p {
+                font-size: 14px !important;
+            }
+            .header {
+                padding: 40px 15px !important;
+            }
+            
+            .nav-inner {
+                padding: 10px 15px !important;
+                gap: 12px !important;
+            }
+            .nav-inner a {
+                font-size: 14px !important;
+                padding: 4px 8px !important;
+            }
+            
+            .post-card, .card, .article-card, .article-item {
+                padding: 20px !important;
+            }
+            .post-title {
+                font-size: 20px !important;
+            }
+            .post-meta, .article-meta {
+                font-size: 11px !important;
+                gap: 8px !important;
+            }
+            .post-summary, .article-content p {
+                font-size: 14px !important;
+            }
+            
+            .container, .container-category {
+                padding: 20px 15px !important;
+            }
+            
+            .category-btn {
+                padding: 6px 14px !important;
+                font-size: 13px !important;
+            }
+            
+            .avatar img {
+                width: 100px !important;
+                height: 100px !important;
+            }
+            .card h2 {
+                font-size: 20px !important;
+            }
+            .skill-tag {
+                padding: 4px 12px !important;
+                font-size: 12px !important;
+            }
+            
+            .footer {
+                padding: 15px !important;
+                font-size: 12px !important;
+            }
+            
+            .wallpaper-mode-fixed-btn {
+                top: 10px !important;
+                left: 10px !important;
+                font-size: 12px !important;
+                padding: 5px 10px !important;
+            }
+            
+            .search-input.show {
+                width: 150px !important;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .nav-inner {
+                gap: 8px !important;
+            }
+            .nav-inner a {
+                font-size: 12px !important;
+                padding: 3px 6px !important;
+            }
+            .post-title {
+                font-size: 18px !important;
+            }
+            .category-btn {
+                padding: 5px 10px !important;
+                font-size: 12px !important;
+            }
+            .search-input.show {
+                width: 120px !important;
+            }
+            .post-meta {
+                flex-direction: column !important;
+                gap: 5px !important;
+            }
         }
     </style>
 </head>
